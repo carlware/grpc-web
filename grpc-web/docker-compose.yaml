@@ -1,0 +1,26 @@
+version: '3.0'
+services:
+  mongo:
+    image: mongo:3.4.10
+    volumes:
+      - mongodb:/data/db
+  blog:
+    image: carlware/blog:devel
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    ports:
+      - "50051:50051"
+    command: ['sleep', '100000']
+    volumes:
+      - ../backend:/devel
+  envoy:
+    image: envoyproxy/envoy:latest
+    ports:
+      - "8080:8080"
+    command: ['envoy', '-c', '/app/envoy/envoy.yaml']
+    volumes:
+      - ../envoy:/app/envoy
+
+volumes:
+  mongodb:
