@@ -36,6 +36,13 @@ type blogItem struct {
 	Title    string             `bson:"title"`
 }
 
+func getEnv(key, fallback string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+	return fallback
+}
+
 func (*server) CreateBlog(ctx context.Context, req *blogpb.CreateBlogRequest) (*blogpb.CreateBlogResponse, error) {
 	fmt.Println("Create blog request")
 	blog := req.GetBlog()
@@ -221,7 +228,8 @@ func main() {
 
 	fmt.Println("Connecting to MongoDB")
 	// connect to MongoDB
-	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
+	mongoURI := getEnv("MONGO_URL", "mongodb://localhost:27017")
+	client, err := mongo.NewClient(options.Client().ApplyURI(mongoURI))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -233,7 +241,9 @@ func main() {
 	fmt.Println("Blog Service Started")
 	collection = client.Database("mydb").Collection("blog")
 
-	lis, err := net.Listen("tcp", "0.0.0.0:50051")
+	tcpPort := getEnv("PORT", "50051")
+	address := fmt.Sprintf("0.0.0.0:%s", tcpPort)
+	lis, err := net.Listen("tcp", address)
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}

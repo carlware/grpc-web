@@ -9,18 +9,31 @@ services:
     build:
       context: ../backend
       dockerfile: Dockerfile
+      # dockerfile: dockerfile.dev
     ports:
-      - "50051:50051"
-    command: ['sleep', '100000']
+      - "50052:50052"
+    # command: ['sleep', '10000000000']
+    command: ['server']
     volumes:
       - ../backend:/devel
+    environment:
+      - MONGO_URL=mongodb://mongo:27017
+      - PORT=50052
   envoy:
     image: envoyproxy/envoy:latest
     ports:
       - "8080:8080"
+      - "9901:9901"
     command: ['envoy', '-c', '/app/envoy/envoy.yaml']
     volumes:
       - ../envoy:/app/envoy
+  react:
+    image: carlware/react:devel
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:80"
 
 volumes:
   mongodb:
