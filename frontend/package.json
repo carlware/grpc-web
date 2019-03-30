@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "google-protobuf": "^3.6.1",
+    "grpc-web": "^0.4.0",
     "react": "^16.8.5",
     "react-dom": "^16.8.5",
-    "react-scripts": "2.1.8",
-    "google-protobuf": "^3.6.1",
-    "grpc-web": "^0.4.0"
+    "react-router-dom": "^5.0.0",
+    "react-scripts": "2.1.8"
   },
   "scripts": {
     "start": "react-scripts start",
