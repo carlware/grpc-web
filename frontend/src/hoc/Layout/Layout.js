@@ -1,17 +1,42 @@
-import React from 'react'
+import React, { Fragment} from 'react'
+import { Link } from 'react-router-dom'
+import {
+  AppBar,
+  withStyles,
+  Toolbar,
+  Typography,
+  CssBaseline,
+} from '@material-ui/core';
+
+const styles = {
+  toolbarButtons: {
+    marginLeft: 'auto',
+  },
+};
 
 class Layout extends React.Component {
 
   render() {
+    const {classes} = this.props
     return (
-      <div className="layout">
-      <h1>Testing WEB GRPC</h1>
+      <Fragment>
+        <CssBaseline />
+        <AppBar position="static">
+          <Toolbar>
+            <Typography variant="title" color="inherit">
+              Testing WEB GRPC
+            </Typography>
+            <div className={classes.toolbarButtons}>
+                <Link to="/blog">Blog</Link>
+            </div>
+          </Toolbar>
+        </AppBar>
         <main>
-        {this.props.children}
+          {this.props.children}
         </main>
-      </div>
+      </Fragment>
     )
   }
 }
 
-export default Layout
+export default withStyles(styles)(Layout);
