@@ -1,9 +1,13 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import {
-  Fab
-} from '@material-ui/core';
-import Icon from '@material-ui/core/Icon'
+  Fab,
+  withStyles,
+} from '@material-ui/core'
+import {
+  Add,
+} from '@material-ui/icons'
 
 const DATA = [
   {
@@ -20,15 +24,30 @@ const DATA = [
   },
 ]
 
+const styles = theme => ({
+  root: {
+    width: 500,
+    position: 'relative',
+    minHeight: 200,
+  },
+  fab: {
+    position: 'absolute',
+    bottom: theme.spacing.unit * 2,
+    right: theme.spacing.unit * 2,
+  },
+});
+
 
 class BlogList extends React.Component {
 
-  constructor(match) {
-    super()
-    this.match = match
+
+  goToNewBlog = () => {
+    this.props.history.push('/blog/new')
   }
 
   render(){
+    const {classes} = this.props
+
     var linkList = DATA.map((item) => {
       return(
         <li key={item.id}>
@@ -40,10 +59,15 @@ class BlogList extends React.Component {
         <ul>
           {linkList}
         </ul>
-        <Fab><Icon>plus</Icon></Fab>
+        <Fab color="primary" aria-label="Add" className={classes.fab}><Add onClick={this.goToNewBlog} /></Fab>
       </div>
     )
   }
 }
 
-export default BlogList
+BlogList.propTypes = {
+  classes: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles, {withTheme: true})(BlogList)

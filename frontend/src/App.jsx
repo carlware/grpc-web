@@ -6,6 +6,7 @@ import './App.css';
 import { Route, Switch } from "react-router-dom";
 import Layout from './hoc/Layout/Layout'
 import Blog from './containers/Blog/Blog'
+import Index from './components/Index'
 
 // const { CreateBlogRequest, Blog } = require('./blogpb/blog_pb.js')
 // const { BlogServiceClient } = require('./blogpb/blog_grpc_web_pb.js')
@@ -18,6 +19,7 @@ class App extends React.Component {
     return (
       <Layout>
         <Switch>
+          <Route exact path="/" component={Index}/>
           <Route path="/blog" component={Blog}/>
           <Route render={() => <p>not found</p>}/>
         </Switch>
