@@ -8,9 +8,6 @@ import Layout from './hoc/Layout/Layout'
 import Blog from './containers/Blog/Blog'
 import Index from './components/Index'
 
-// const { CreateBlogRequest, Blog } = require('./blogpb/blog_pb.js')
-// const { BlogServiceClient } = require('./blogpb/blog_grpc_web_pb.js')
-// let service = new BlogServiceClient('http://localhost:8080');
 
 
 class App extends React.Component {

@@ -1,34 +1,26 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
 import {
   Fab,
   withStyles,
+  List,
+  ListItem,
+  ListItemText,
+  Typography,
+  Grid,
 } from '@material-ui/core'
 import {
   Add,
 } from '@material-ui/icons'
 
-const DATA = [
-  {
-    id: 1,
-    title: 'random 1'
-  },
-  {
-    id: 2,
-    title: 'random 2'
-  },
-  {
-    id: 3,
-    title: 'random 3'
-  },
-]
+const actions = require('../../../store/actions/blog.js')
 
 const styles = theme => ({
   root: {
-    width: 500,
-    position: 'relative',
-    minHeight: 200,
+    width: '100%',
+    backgroundColor: theme.palette.background.paper,
   },
   fab: {
     position: 'absolute',
@@ -40,25 +32,43 @@ const styles = theme => ({
 
 class BlogList extends React.Component {
 
-
   goToNewBlog = () => {
     this.props.history.push('/blog/new')
+  }
+
+  componentDidMount () {
+    this.props.onFetchPosts()
+    console.log(this.props)
   }
 
   render(){
     const {classes} = this.props
 
-    var linkList = DATA.map((item) => {
+    var linkList = this.props.posts.map((item) => {
       return(
-        <li key={item.id}>
-          <Link to={`/blog/${item.id}`}>{item.title}</Link>
-        </li>
+        <ListItem key={item.id} component={Link} to={`/blog/${item.id}`}>
+        <ListItemText
+            primary={item.title}
+            secondary={
+              <React.Fragment>
+                <Typography component="span" className={classes.inline} color="textPrimary">
+                  {`${item.author}`}
+                </Typography>
+                {`— ${item.content}`}
+              </React.Fragment>
+            }
+          />
+          </ListItem>
       )})
     return(
-      <div>
-        <ul>
-          {linkList}
-        </ul>
+      <div style={{flexGrow: 1, padding: '10px'}}>
+        <Grid container direction="column" alignItems="center" justify="center">
+          <Grid item xs={8} style={{width: '100%'}}>
+            <List className={classes.root}>
+              {linkList}
+            </List>
+          </Grid>
+        </Grid>
         <Fab color="primary" aria-label="Add" className={classes.fab}><Add onClick={this.goToNewBlog} /></Fab>
       </div>
     )
@@ -68,6 +78,19 @@ class BlogList extends React.Component {
 BlogList.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
+}
+
+const mapStateToProps = state => {
+  return {
+    posts: state.blog.posts,
+    loading: state.blog.loading,
+  };
 };
 
-export default withStyles(styles, {withTheme: true})(BlogList)
+const mapDispatchToProps = dispatch => {
+  return {
+    onFetchPosts: () => dispatch( actions.fetchPosts() )
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles, {withTheme: true})(BlogList))

@@ -12,6 +12,9 @@ const styles = {
   toolbarButtons: {
     marginLeft: 'auto',
   },
+  'toolbarButtons:a': {
+    color: 'white'
+  }
 };
 
 class Layout extends React.Component {
