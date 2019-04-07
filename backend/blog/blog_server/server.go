@@ -7,6 +7,7 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 
@@ -190,35 +191,42 @@ func (*server) DeleteBlog(ctx context.Context, req *blogpb.DeleteBlogRequest) (*
 	return &blogpb.DeleteBlogResponse{BlogId: req.GetBlogId()}, nil
 }
 
-func (*server) ListBlog(req *blogpb.ListBlogRequest, stream blogpb.BlogService_ListBlogServer) error {
+func (*server) ListBlog(ctx context.Context, req *blogpb.ListBlogRequest) (*blogpb.ListBlogResponse, error) {
 	fmt.Println("List blog request")
 
 	cur, err := collection.Find(context.Background(), bson.D{{}})
 	if err != nil {
-		return status.Errorf(
+		return nil, status.Errorf(
 			codes.Internal,
 			fmt.Sprintf("Unknown internal error: %v", err),
 		)
 	}
-	defer cur.Close(context.Background())
+	postsPtr := []*blogpb.Blog{}
 	for cur.Next(context.Background()) {
 		data := &blogItem{}
 		err := cur.Decode(data)
 		if err != nil {
-			return status.Errorf(
+			return nil, status.Errorf(
 				codes.Internal,
 				fmt.Sprintf("Error while decoding data from MongoDB: %v", err),
 			)
 
 		}
-		stream.Send(&blogpb.ListBlogResponse{Blog: dataToBlogPb(data)})
+		blog := dataToBlogPb(data)
+		postsPtr = append(postsPtr, blog)
 	}
-	if err := cur.Err(); err != nil {
-		return status.Errorf(
-			codes.Internal,
-			fmt.Sprintf("Unknown internal error: %v", err),
-		)
+	return &blogpb.ListBlogResponse{Blogs: postsPtr}, nil
+}
+
+func (*server) GetEvent(req *blogpb.GetEventRequest, stream blogpb.BlogService_GetEventServer) error {
+	fmt.Println("Get blog Events")
+
+	user := req.GetUser()
+	for true {
+		stream.Send(&blogpb.GetEventResponse{Message: fmt.Sprintf("hello world %s", user)})
+		time.Sleep(5 * time.Second)
 	}
+
 	return nil
 }
 

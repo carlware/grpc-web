@@ -8,45 +8,60 @@ let service = new BlogServiceClient('http://localhost:8080');
 
 const getList = () => {
   return new Promise((resolve, reject) => {
-    const stream = service.listBlog(new ListBlogRequest(), {})
-
     const posts = []
-    stream.on('data', (resp, err) => {
-      if(err !== undefined) reject(err)
-      posts.push({
-        id: resp.getBlog().getId(),
-        title: resp.getBlog().getTitle(),
-        content: resp.getBlog().getContent(),
+    service.listBlog(new ListBlogRequest(), {}, (err, resp) => {
+
+      if(err !== null && err !== undefined) reject(err)
+      resp.getBlogsList().forEach((ele) => {
+        console.log(ele)
+        posts.push({
+          id: ele.getId(),
+          title: ele.getTitle(),
+          content: ele.getContent(),
+          author: ele.getAuthorId(),
+        })
       })
-    })
-    stream.on('end', () => {
+      console.log(posts)
       resolve(posts)
     })
   })
 }
 
-export function* fetchPostsSaga(action) {
-  yield put(actions.fetchPostsStart());
-  try {
-    // let request = new CreateBlogRequest()
-    // let blog = new Blog()
-    // blog.setTitle("web grpc")
-    // request.setBlog(blog)
-    // service.createBlog(request, {}, (err, resp) => {
-    //   console.log("error", err)
-    //   window.RESP = resp
-    //   console.log("response", resp.getBlog().getTitle())
-    // })
-    const response = yield getList()
-    const fetchedPosts = [];
-    response.forEach((item) => {
-      fetchedPosts.push({
-        ...item
-      })
+const createBlog = (post) => {
+  return new Promise((resolve, reject) => {
+    let request = new CreateBlogRequest()
+    let blog = new Blog()
+    blog.setTitle(post.title)
+    blog.setAuthorId(post.author)
+    blog.setContent(post.content)
+    request.setBlog(blog)
+    service.createBlog(request, {}, (err, resp) => {
+      if (err !== null || err !== undefined) reject(err)
+      post.id = resp.getBlog().getId()
+      resolve(post)
     })
-    yield put(actions.fetchPostsSuccess(fetchedPosts));
+  })
+}
+
+export function* fetchPostsSaga(action) {
+  yield put(actions.fetchPostsStart())
+  try {
+    const response = yield getList()
+    yield put(actions.fetchPostsSuccess(response))
   } catch (error) {
     console.log(error)
-    yield put(actions.fetchPostsFail(error));
+    yield put(actions.fetchPostsFail(error))
+  }
+}
+
+export function* createPostSaga(action) {
+  console.log(action)
+  yield put(actions.createPostStart())
+  try {
+    const response = yield createBlog(action.post)
+    yield put(actions.createPostSuccess(response))
+  } catch (err) {
+    console.log(err)
+    yield put(actions.createPostFail(err))
   }
 }

@@ -13,6 +13,10 @@ message Blog {
   string content = 4;
 }
 
+message Event {
+  string message = 1;
+}
+
 message CreateBlogRequest {
   Blog blog = 1;
 }
@@ -50,7 +54,15 @@ message ListBlogRequest {
 }
 
 message ListBlogResponse {
-  Blog blog = 1;
+  repeated Blog blogs = 1;
+}
+
+message GetEventRequest {
+  string user = 1;
+}
+
+message GetEventResponse {
+  string message = 1;
 }
 
 service BlogService {
@@ -63,5 +75,6 @@ service BlogService {
   rpc ReadBlog (ReadBlogRequest) returns (ReadBlogResponse); // return NOT_FOUND if not found
   rpc UpdateBlog (UpdateBlogRequest) returns (UpdateBlogResponse); // return NOT_FOUND if not found
   rpc DeleteBlog (DeleteBlogRequest) returns (DeleteBlogResponse); // return NOT_FOUND if not found
-  rpc ListBlog (ListBlogRequest) returns (stream ListBlogResponse);
+  rpc ListBlog (ListBlogRequest) returns (ListBlogResponse);
+  rpc GetEvent (GetEventRequest) returns (stream GetEventResponse);
 }

@@ -3,4 +3,8 @@ export {
   fetchPostsStart,
   fetchPostsSuccess,
   fetchPostsFail,
+  createPost,
+  createPostStart,
+  createPostSuccess,
+  createPostFail,
 } from './blog.js'

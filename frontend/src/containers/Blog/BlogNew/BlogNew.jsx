@@ -7,6 +7,9 @@ import {
   CardContent,
 } from '@material-ui/core'
 
+import { connect } from 'react-redux';
+const actions = require('../../../store/actions/blog.js')
+
 
 class BlogNew extends React.Component {
   state = {
@@ -18,8 +21,8 @@ class BlogNew extends React.Component {
   }
 
   handleSubmit(values) {
-    console.log(values);
-    console.log(this.state)
+    console.log(this.state.form)
+    this.props.onCreatePost(this.state.form)
   }
 
   handleChange = (event) => {
@@ -68,4 +71,18 @@ class BlogNew extends React.Component {
   }
 }
 
-export default BlogNew
+const mapStateToProps = state => {
+  return {
+    post: state.blog.newPost.post,
+    loading: state.blog.newPost.loading,
+    error: state.blog.newPost.error
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onCreatePost: (post) => dispatch( actions.createPost(post) )
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(BlogNew)

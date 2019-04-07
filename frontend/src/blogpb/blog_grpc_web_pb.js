@@ -1,4 +1,3 @@
-/* eslint-disable */
 /**
  * @fileoverview gRPC-Web generated client stub for blog
  * @enhanceable
@@ -404,3 +403,4 @@ proto.blog.BlogServicePromiseClient.prototype.getEvent =
 
 
 module.exports = proto.blog;
+

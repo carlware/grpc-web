@@ -1,8 +1,11 @@
 import { takeEvery, all, takeLatest } from "redux-saga/effects";
 
 import * as actionTypes from "../actions/actionTypes";
-import {fetchPostsSaga} from "./blog.js"
+import {fetchPostsSaga, createPostSaga} from "./blog.js"
 
 export function* watchPosts() {
-  yield takeEvery(actionTypes.FETCH_POSTS, fetchPostsSaga);
+  yield all([
+    takeEvery(actionTypes.FETCH_POSTS, fetchPostsSaga),
+    takeLatest(actionTypes.CREATE_POST, createPostSaga),
+  ])
 }
