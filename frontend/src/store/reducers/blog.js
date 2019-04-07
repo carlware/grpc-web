@@ -45,8 +45,6 @@ const fetchPostsFail = ( state, action ) => {
 }
 
 const reducer = ( state = initialState, action ) => {
-  console.log(state)
-  console.log(action)
   switch ( action.type ) {
   case actionTypes.FETCH_POSTS_START: return fetchPostsStart( state, action );
   case actionTypes.FETCH_POSTS_SUCCESS: return fetchPostsSuccess( state, action );

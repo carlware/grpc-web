@@ -13,7 +13,6 @@ const getList = () => {
 
       if(err !== null && err !== undefined) reject(err)
       resp.getBlogsList().forEach((ele) => {
-        console.log(ele)
         posts.push({
           id: ele.getId(),
           title: ele.getTitle(),
