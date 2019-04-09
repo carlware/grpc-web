@@ -10,9 +10,12 @@ import {
   ListItemText,
   Typography,
   Grid,
+  ListItemSecondaryAction,
+  IconButton,
 } from '@material-ui/core'
 import {
   Add,
+  Delete,
 } from '@material-ui/icons'
 
 const actions = require('../../../store/actions/blog.js')
@@ -47,7 +50,7 @@ class BlogList extends React.Component {
     var linkList = this.props.posts.map((item) => {
       return(
         <ListItem key={item.id} component={Link} to={`/blog/${item.id}`}>
-        <ListItemText
+          <ListItemText
             primary={item.title}
             secondary={
               <React.Fragment>
@@ -58,7 +61,12 @@ class BlogList extends React.Component {
               </React.Fragment>
             }
           />
-          </ListItem>
+          <ListItemSecondaryAction>
+            <IconButton aria-label="Delete" onClick={() => this.props.onDeletePost(item.id)}>
+              <Delete />
+            </IconButton>
+          </ListItemSecondaryAction>
+        </ListItem>
       )})
     return(
       <div style={{flexGrow: 1, padding: '10px'}}>
@@ -89,7 +97,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onFetchPosts: () => dispatch( actions.fetchPosts() )
+    onFetchPosts: () => dispatch( actions.fetchPosts() ),
+    onDeletePost: (postId) => dispatch( actions.deletePost(postId) )
   }
 }
 

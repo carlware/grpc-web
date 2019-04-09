@@ -7,4 +7,8 @@ export {
   createPostStart,
   createPostSuccess,
   createPostFail,
+  deletePost,
+  deletePostStart,
+  deletePostSuccess,
+  deletePostFail,
 } from './blog.js'

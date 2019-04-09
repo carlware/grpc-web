@@ -2,7 +2,7 @@ import { put } from "redux-saga/effects";
 
 const actions = require("../actions/index")
 
-const { CreateBlogRequest, Blog, ListBlogRequest } = require('../../services/blogpb/blog_pb.js')
+const { CreateBlogRequest, Blog, ListBlogRequest, DeleteBlogRequest } = require('../../services/blogpb/blog_pb.js')
 const { BlogServiceClient } = require('../../services/blogpb/blog_grpc_web_pb.js')
 let service = new BlogServiceClient('http://localhost:8080');
 
@@ -42,6 +42,20 @@ const createBlog = (post) => {
   })
 }
 
+const deleteBlog = (postId) => {
+  return new Promise((resolve, reject) => {
+    let request = new DeleteBlogRequest()
+    request.setBlogId(postId)
+    service.deleteBlog(request, {}, (err, resp) => {
+      console.log(err)
+      console.log(resp)
+      if (err !== null) reject(err)
+      const res = resp.getBlogId()
+      resolve(res)
+    })
+  })
+}
+
 export function* fetchPostsSaga(action) {
   yield put(actions.fetchPostsStart())
   try {
@@ -62,5 +76,18 @@ export function* createPostSaga(action) {
   } catch (err) {
     console.log(err)
     yield put(actions.createPostFail(err))
+  }
+}
+
+export function* deletePostSaga(action) {
+  console.log(action)
+  yield put(actions.deletePostStart())
+  try {
+    const response = yield deleteBlog(action.postId)
+    yield put(actions.fetchPosts())
+    yield put(actions.deletePostSuccess(response))
+  } catch(err){
+    console.log(err)
+    yield put(actions.deletePostFail(err))
   }
 }

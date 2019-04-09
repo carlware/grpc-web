@@ -39,7 +39,6 @@ export const createPost = (post) => {
 export const createPostStart = () => {
   return {
     type: actionTypes.CREATE_POST_START,
-    loading: true
   }
 }
 
@@ -55,6 +54,34 @@ export const createPostSuccess = (post) => {
 export const createPostFail = (error) => {
   return {
     type: actionTypes.CREATE_POST_FAIL,
+    error: error
+  }
+}
+
+export const deletePost = (postId) => {
+  return {
+    type: actionTypes.DELETE_POST,
+    postId: postId
+  }
+}
+
+export const deletePostStart = () => {
+  return {
+    type: actionTypes.DELETE_POST_START,
+  }
+}
+
+
+export const deletePostSuccess = () => {
+  return {
+    type: actionTypes.DELETE_POST_SUCCESS,
+  }
+}
+
+
+export const deletePostFail = (error) => {
+  return {
+    type: actionTypes.DELETE_POST_FAIL,
     error: error
   }
 }
