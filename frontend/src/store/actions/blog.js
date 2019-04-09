@@ -85,3 +85,60 @@ export const deletePostFail = (error) => {
     error: error
   }
 }
+
+export const readPost = (postId) => {
+  return {
+    type: actionTypes.READ_POST,
+    postId: postId
+  }
+}
+
+export const readPostStart = () => {
+  return {
+    type: actionTypes.READ_POST_START,
+  }
+}
+
+
+export const readPostSuccess = (post) => {
+  return {
+    type: actionTypes.READ_POST_SUCCESS,
+    post: post
+  }
+}
+
+
+export const readPostFail = (error) => {
+  return {
+    type: actionTypes.READ_POST_FAIL,
+    error: error
+  }
+}
+
+export const updatePost = (post) => {
+  return {
+    type: actionTypes.UPDATE_POST,
+    post: post
+  }
+}
+
+export const updatePostStart = () => {
+  return {
+    type: actionTypes.UPDATE_POST_START,
+  }
+}
+
+
+export const updatePostSuccess = () => {
+  return {
+    type: actionTypes.UPDATE_POST_SUCCESS,
+  }
+}
+
+
+export const updatePostFail = (error) => {
+  return {
+    type: actionTypes.UPDATE_POST_FAIL,
+    error: error
+  }
+}

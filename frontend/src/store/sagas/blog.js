@@ -2,7 +2,13 @@ import { put } from "redux-saga/effects";
 
 const actions = require("../actions/index")
 
-const { CreateBlogRequest, Blog, ListBlogRequest, DeleteBlogRequest } = require('../../services/blogpb/blog_pb.js')
+const {
+  CreateBlogRequest,
+  Blog,
+  ListBlogRequest,
+  UpdateBlogRequest,
+  ReadBlogRequest,
+  DeleteBlogRequest } = require('../../services/blogpb/blog_pb.js')
 const { BlogServiceClient } = require('../../services/blogpb/blog_grpc_web_pb.js')
 let service = new BlogServiceClient('http://localhost:8080');
 
@@ -56,6 +62,41 @@ const deleteBlog = (postId) => {
   })
 }
 
+const updateBlog = (post) => {
+  return new Promise((resolve, reject) => {
+    let request = new UpdateBlogRequest()
+    let blog = new Blog()
+    blog.setTitle(post.title)
+    blog.setAuthorId(post.author)
+    blog.setContent(post.content)
+    blog.setId(post.id)
+    request.setBlog(blog)
+    service.updateBlog(request, {}, (err, resp) => {
+      if (err !== null || err !== undefined) reject(err)
+      resolve(post)
+    })
+  })
+}
+
+const readBlog = (postId) => {
+  return new Promise((resolve, reject) => {
+    let request = new ReadBlogRequest()
+    request.setBlogId(postId)
+    service.readBlog(request, {}, (err, resp) => {
+      console.log(err)
+      console.log(resp)
+      if (err !== null) reject(err)
+      const res = {
+        id: resp.getBlog().getId(),
+        author: resp.getBlog().getAuthorId(),
+        title: resp.getBlog().getTitle(),
+        content: resp.getBlog().getContent(),
+      }
+      resolve(res)
+    })
+  })
+}
+
 export function* fetchPostsSaga(action) {
   yield put(actions.fetchPostsStart())
   try {
@@ -89,5 +130,29 @@ export function* deletePostSaga(action) {
   } catch(err){
     console.log(err)
     yield put(actions.deletePostFail(err))
+  }
+}
+
+export function* readPostSaga(action) {
+  console.log(action)
+  yield put(actions.readPostStart())
+  try {
+    const response = yield readBlog(action.postId)
+    yield put(actions.readPostSuccess(response))
+  } catch(err){
+    console.log(err)
+    yield put(actions.readPostFail(err))
+  }
+}
+
+export function* updatePostSaga(action) {
+  console.log(action)
+  yield put(actions.updatePostStart())
+  try {
+    const response = yield updateBlog(action.post)
+    yield put(actions.updatePostSuccess(response))
+  } catch (err) {
+    console.log(err)
+    yield put(actions.updatePostFail(err))
   }
 }

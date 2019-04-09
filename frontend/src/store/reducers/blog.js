@@ -5,6 +5,8 @@ const initialState = {
   loading: false,
   error: null,
   newPost: {post: null, loading: null, error: null},
+  readPost: {postId: null, loading: null, error: null},
+  updatePost: {post: null, loading: null, error: null},
   deletePost: {postId: null, loading: false, error: null}
 }
 
@@ -73,6 +75,62 @@ const fetchPostsFail = ( state, action ) => {
   }}
 }
 
+const readPostStart = (state, action) => {
+  return {
+    ...state,
+    readPost: {
+      postId: action.postId,
+      loading: true
+    }
+  }
+}
+
+const readPostSuccess = ( state, action ) => {
+  return {
+    ...state,
+    readPost: {
+      loading: false,
+      post: action.post
+    }
+  }
+}
+
+const readPostFail = ( state, action ) => {
+  return {
+    ...state,
+    readPost: {
+      loading: false
+    }
+  }
+}
+
+const updatePostStart = (state, action) => {
+  return {
+    ...state,
+    updatePost: {
+      post: action.post,
+      loading: true
+    }
+  }
+}
+
+const updatePostSuccess = ( state, action ) => {
+  return {
+    ...state,
+    updatePost: {
+      loading: false
+    }
+  }
+}
+
+const updatePostFail = ( state, action ) => {
+  return {
+    ...state,
+    updatePost: {
+      loading: false
+    }
+  }
+}
 const reducer = ( state = initialState, action ) => {
   switch ( action.type ) {
   case actionTypes.FETCH_POSTS_START: return fetchPostsStart( state, action );
@@ -84,6 +142,12 @@ const reducer = ( state = initialState, action ) => {
   case actionTypes.DELETE_POST_START: return deletePostStart( state, action );
   case actionTypes.DELETE_POST_SUCCESS: return deletePostSuccess( state, action );
   case actionTypes.DELETE_POST_FAIL: return deletePostFail( state, action );
+  case actionTypes.READ_POST_START: return readPostStart( state, action );
+  case actionTypes.READ_POST_SUCCESS: return readPostSuccess( state, action );
+  case actionTypes.READ_POST_FAIL: return readPostFail( state, action );
+  case actionTypes.UPDATE_POST_START: return updatePostStart( state, action );
+  case actionTypes.UPDATE_POST_SUCCESS: return updatePostSuccess( state, action );
+  case actionTypes.UPDATE_POST_FAIL: return updatePostFail( state, action );
   default: return state;
   }
 }
