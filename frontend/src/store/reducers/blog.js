@@ -5,7 +5,7 @@ const initialState = {
   loading: false,
   error: null,
   newPost: {post: null, loading: null, error: null},
-  readPost: {postId: null, loading: null, error: null},
+  readPost: {postId: 1, loading: null, error: null, post: null},
   updatePost: {post: null, loading: null, error: null},
   deletePost: {postId: null, loading: false, error: null}
 }
@@ -132,6 +132,8 @@ const updatePostFail = ( state, action ) => {
   }
 }
 const reducer = ( state = initialState, action ) => {
+  console.log(state)
+  console.log(action)
   switch ( action.type ) {
   case actionTypes.FETCH_POSTS_START: return fetchPostsStart( state, action );
   case actionTypes.FETCH_POSTS_SUCCESS: return fetchPostsSuccess( state, action );

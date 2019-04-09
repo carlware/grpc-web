@@ -11,21 +11,16 @@ import { connect } from 'react-redux';
 const actions = require('../../../store/actions/blog.js')
 
 class BlogItem extends React.Component {
-  state = {
-    post: {
-      id: '',
-      author: '',
-      title: '',
-      content: ''
-    }
-  }
+
+  state = {post:{author: '', title: '', content: ''}}
 
   componentDidMount() {
     const postId = this.props.match.params.id
-    console.log(postId)
     this.props.onReadPost(postId)
-    console.log(this.state.post)
-    window.REACT_STATE = this.state
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({...this.state, post: nextProps.post});
   }
 
   handleSubmit(values) {
@@ -35,7 +30,7 @@ class BlogItem extends React.Component {
 
   deleteSubmit(values) {
     console.log(this.state.post)
-    this.props.onDeletePost(this.state.post.id)
+    this.props.onDeletePost(this.props.post.id)
   }
 
   handleChange = (event) => {
@@ -50,6 +45,8 @@ class BlogItem extends React.Component {
   }
 
   render() {
+    console.log(this.props)
+    if(this.props.post === null || this.props.post === undefined )return (<div></div>)
     return (
       <div style={{flexGrow: 1, padding: '10px'}}>
         <Grid
@@ -88,6 +85,7 @@ class BlogItem extends React.Component {
 const mapStateToProps = state => {
   return {
     post: state.blog.readPost.post,
+    readPost: state.blog.readPost,
     loading: state.blog.readPost.loading,
     error: state.blog.readPost.error
   }

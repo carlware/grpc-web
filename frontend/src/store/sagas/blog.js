@@ -72,7 +72,7 @@ const updateBlog = (post) => {
     blog.setId(post.id)
     request.setBlog(blog)
     service.updateBlog(request, {}, (err, resp) => {
-      if (err !== null || err !== undefined) reject(err)
+      if (err !== null) reject(err)
       resolve(post)
     })
   })

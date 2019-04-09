@@ -47,6 +47,7 @@ class BlogList extends React.Component {
   render(){
     const {classes} = this.props
 
+    console.log(this.state)
     var linkList = this.props.posts.map((item) => {
       return(
         <ListItem key={item.id} component={Link} to={`/blog/${item.id}`}>
