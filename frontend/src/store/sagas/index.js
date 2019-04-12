@@ -1,7 +1,8 @@
-import { takeEvery, all, takeLatest } from "redux-saga/effects";
+import { all, takeLatest } from "redux-saga/effects";
 
 import { BlogTypes } from '../redux/blog'
 import * as Blog from '../sagas/blog'
+
 
 export function* watchPosts() {
   yield all([

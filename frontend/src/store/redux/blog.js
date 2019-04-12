@@ -47,17 +47,17 @@ export const fetchPostsStart = (state) => {
   })
 }
 
-export const fetchPostsSuccess = ( state, {posts} ) => {
+export const fetchPostsSuccess = ( state, action ) => {
   return state.merge({
-    posts: posts,
+    posts: action.posts,
     loading: false
   })
 }
 
-export const fetchPostsFail = ( state, {error} ) => {
+export const fetchPostsFail = ( state, action ) => {
   return state.merge({
     loading: false,
-    error: error
+    error: action.error
   })
 }
 
@@ -130,6 +130,7 @@ export const updatePostStart = (state, action) => {
 export const updatePostSuccess = ( state, action ) => {
   return state.merge({
     loading: false,
+    post: action.post
   })
 }
 

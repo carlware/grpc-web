@@ -9,7 +9,6 @@ import Blog from './containers/Blog/Blog'
 import Index from './components/Index'
 
 
-
 class App extends React.Component {
 
   render() {
