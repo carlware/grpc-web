@@ -18,7 +18,7 @@ import {
   Delete,
 } from '@material-ui/icons'
 
-const actions = require('../../../store/actions/blog.js')
+const actions = require('../../../store/redux/blog').Actions
 
 const styles = theme => ({
   root: {
@@ -40,7 +40,9 @@ class BlogList extends React.Component {
   }
 
   componentDidMount () {
+    console.log('===== did mount =====')
     this.props.onFetchPosts()
+    console.log('===== did mount =====')
     console.log(this.props)
   }
 
@@ -48,6 +50,10 @@ class BlogList extends React.Component {
     const {classes} = this.props
 
     console.log(this.state)
+    console.log(this.props.posts)
+
+    if (this.props.posts === null) return(<div></div>)
+
     var linkList = this.props.posts.map((item) => {
       return(
         <ListItem key={item.id} component={Link} to={`/blog/${item.id}`}>

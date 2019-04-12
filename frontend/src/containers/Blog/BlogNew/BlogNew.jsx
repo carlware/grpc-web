@@ -8,7 +8,7 @@ import {
 } from '@material-ui/core'
 
 import { connect } from 'react-redux';
-const actions = require('../../../store/actions/blog.js')
+const actions = require('../../../store/redux/blog').Actions
 
 
 class BlogNew extends React.Component {
@@ -73,9 +73,8 @@ class BlogNew extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    post: state.blog.newPost.post,
-    loading: state.blog.newPost.loading,
-    error: state.blog.newPost.error
+    loading: state.blog.loading,
+    error: state.blog.error
   }
 }
 

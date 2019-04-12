@@ -9,7 +9,6 @@ import { Provider } from "react-redux"
 import { createStore, combineReducers, compose, applyMiddleware } from "redux";
 import createSagaMiddleware from "redux-saga"
 
-import blogReducer from './store/reducers/blog'
 import { watchPosts } from './store/sagas/index'
 
 const composeEnhancers =
@@ -18,7 +17,7 @@ const composeEnhancers =
   : null || compose;
 
 const rootReducer = combineReducers({
-  blog: blogReducer
+  blog: require('./store/redux/blog').reducer
 })
 
 const sagaMiddleware = createSagaMiddleware();

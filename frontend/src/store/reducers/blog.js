@@ -59,10 +59,18 @@ const createPostFail = ( state, action ) => {
 }
 
 const fetchPostsStart = (state, action) => {
+  console.log(' ==== fecth posts ===')
+  console.log('fetch post state', state)
+  console.log('fetch post state', action)
+  console.log(' ==== fecth posts ===')
   return {...state, ...{loading: true}}
 }
 
 const fetchPostsSuccess = ( state, action ) => {
+  console.log(' ==== fecth posts s ===')
+  console.log('fetch post s state', state)
+  console.log('fetch post s state', action)
+  console.log(' ==== fecth s posts ===')
   return {...state, ...{
     posts: action.posts,
     loading: false
@@ -132,8 +140,10 @@ const updatePostFail = ( state, action ) => {
   }
 }
 const reducer = ( state = initialState, action ) => {
+  console.log('===== reducer =====')
   console.log(state)
   console.log(action)
+  console.log('===== reducer =====')
   switch ( action.type ) {
   case actionTypes.FETCH_POSTS_START: return fetchPostsStart( state, action );
   case actionTypes.FETCH_POSTS_SUCCESS: return fetchPostsSuccess( state, action );

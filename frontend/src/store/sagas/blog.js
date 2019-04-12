@@ -1,6 +1,6 @@
 import { put } from "redux-saga/effects";
 
-const actions = require("../actions/index")
+const actions = require("../redux/blog").Actions
 
 const {
   CreateBlogRequest,
@@ -16,8 +16,8 @@ const getList = () => {
   return new Promise((resolve, reject) => {
     const posts = []
     service.listBlog(new ListBlogRequest(), {}, (err, resp) => {
-
-      if(err !== null && err !== undefined) reject(err)
+      if(err !== null) reject(err)
+      if(resp === null) return posts
       resp.getBlogsList().forEach((ele) => {
         posts.push({
           id: ele.getId(),
@@ -26,7 +26,6 @@ const getList = () => {
           author: ele.getAuthorId(),
         })
       })
-      console.log(posts)
       resolve(posts)
     })
   })
@@ -41,7 +40,7 @@ const createBlog = (post) => {
     blog.setContent(post.content)
     request.setBlog(blog)
     service.createBlog(request, {}, (err, resp) => {
-      if (err !== null || err !== undefined) reject(err)
+      if (err !== null) reject(err)
       post.id = resp.getBlog().getId()
       resolve(post)
     })
@@ -98,6 +97,9 @@ const readBlog = (postId) => {
 }
 
 export function* fetchPostsSaga(action) {
+  console.log(' ===== fetch post saga =====')
+  console.log('action', action)
+  console.log(' ===== fetch post saga =====')
   yield put(actions.fetchPostsStart())
   try {
     const response = yield getList()
