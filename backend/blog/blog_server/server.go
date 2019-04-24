@@ -12,6 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
 
@@ -47,6 +48,10 @@ func getEnv(key, fallback string) string {
 func (*server) CreateBlog(ctx context.Context, req *blogpb.CreateBlogRequest) (*blogpb.CreateBlogResponse, error) {
 	fmt.Println("Create blog request")
 	blog := req.GetBlog()
+
+	md, _ := metadata.FromIncomingContext(ctx)
+
+	fmt.Println("metadata: ", md)
 
 	data := blogItem{
 		AuthorID: blog.GetAuthorId(),
@@ -230,6 +235,34 @@ func (*server) GetEvent(req *blogpb.GetEventRequest, stream blogpb.BlogService_G
 	return nil
 }
 
+func serverInterceptor(ctx context.Context,
+	req interface{},
+	info *grpc.UnaryServerInfo,
+	handler grpc.UnaryHandler) (interface{}, error) {
+	start := time.Now()
+	// Skip authorize when GetJWT is requested
+	// if info.FullMethod != "/proto.EventStoreService/GetJWT" {
+	// 	if err := authorize(ctx); err != nil {
+	// 		return nil, err
+	// 	}
+	// }
+
+	// Calls the handler
+	h, err := handler(ctx, req)
+
+	// Logging with grpclog (grpclog.LoggerV2)
+	fmt.Printf("Request - Method:%s\tDuration:%s\tError:%v\n",
+		info.FullMethod,
+		time.Since(start),
+		err)
+
+	return h, err
+}
+
+func withServerUnaryInterceptor() grpc.ServerOption {
+	return grpc.UnaryInterceptor(serverInterceptor)
+}
+
 func main() {
 	// if we crash the go code, we get the file name and line number
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
@@ -256,8 +289,8 @@ func main() {
 		log.Fatalf("Failed to listen: %v", err)
 	}
 
-	opts := []grpc.ServerOption{}
-	s := grpc.NewServer(opts...)
+	// opts := []grpc.ServerOption{}
+	s := grpc.NewServer(withServerUnaryInterceptor())
 	blogpb.RegisterBlogServiceServer(s, &server{})
 	// Register reflection service on gRPC server.
 	reflection.Register(s)
