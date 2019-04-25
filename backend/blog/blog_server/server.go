@@ -23,6 +23,7 @@ import (
 
 	"carlware/web-grpc/blog/blogpb"
 
+	"github.com/grpc-ecosystem/go-grpc-middleware"
 	"google.golang.org/grpc"
 )
 
@@ -235,32 +236,41 @@ func (*server) GetEvent(req *blogpb.GetEventRequest, stream blogpb.BlogService_G
 	return nil
 }
 
-func serverInterceptor(ctx context.Context,
-	req interface{},
-	info *grpc.UnaryServerInfo,
-	handler grpc.UnaryHandler) (interface{}, error) {
-	start := time.Now()
-	// Skip authorize when GetJWT is requested
-	// if info.FullMethod != "/proto.EventStoreService/GetJWT" {
-	// 	if err := authorize(ctx); err != nil {
-	// 		return nil, err
-	// 	}
-	// }
+func getUnaryServerInterceptor() grpc.UnaryServerInterceptor {
+	return func(ctx context.Context,
+		req interface{},
+		info *grpc.UnaryServerInfo,
+		handler grpc.UnaryHandler) (interface{}, error) {
+		start := time.Now()
+		// Skip authorize when GetJWT is requested
+		// if info.FullMethod != "/proto.EventStoreService/GetJWT" {
+		// 	if err := authorize(ctx); err != nil {
+		// 		return nil, err
+		// 	}
+		// }
 
-	// Calls the handler
-	h, err := handler(ctx, req)
+		// Calls the handler
+		h, err := handler(ctx, req)
 
-	// Logging with grpclog (grpclog.LoggerV2)
-	fmt.Printf("Request - Method:%s\tDuration:%s\tError:%v\n",
-		info.FullMethod,
-		time.Since(start),
-		err)
+		// Logging with grpclog (grpclog.LoggerV2)
+		fmt.Printf("Request - Method:%s\tDuration:%s\tError:%v\n",
+			info.FullMethod,
+			time.Since(start),
+			err)
 
-	return h, err
+		return h, err
+	}
 }
 
-func withServerUnaryInterceptor() grpc.ServerOption {
-	return grpc.UnaryInterceptor(serverInterceptor)
+func getStreamServerInterceptor() grpc.StreamServerInterceptor {
+	return func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+		fmt.Println("stream interceptor")
+		fmt.Printf("Request - Method:%s\n", info.FullMethod)
+
+		err := handler(srv, ss)
+
+		return err
+	}
 }
 
 func main() {
@@ -290,7 +300,9 @@ func main() {
 	}
 
 	// opts := []grpc.ServerOption{}
-	s := grpc.NewServer(withServerUnaryInterceptor())
+	s := grpc.NewServer(
+		grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(getStreamServerInterceptor())),
+		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(getUnaryServerInterceptor())))
 	blogpb.RegisterBlogServiceServer(s, &server{})
 	// Register reflection service on gRPC server.
 	reflection.Register(s)
